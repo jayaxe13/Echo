@@ -15,10 +15,6 @@
 
         <title>Echo</title>
 
-        <script type="text/javascript">
-
-        </script> 
-
         <style>
             body { 
                 background: url("images/home/bg.jpg") no-repeat center center fixed; 
@@ -28,57 +24,20 @@
                 -o-background-size: cover;
                 background-size: cover;
             }
-            body {
-                
-
-            }
         </style>
     </head>
     <body>
         <!--Standard Includes-->
         <%@include file="include/header-nav.jsp" %>
         <%@include file="include/bootstrap.jsp" %>
-        
-        <!--Includes END-->
-        <%            UserDAO userdao = new UserDAO();
-            String firstname = "";
-            //validates if user exists already
-            if (session.getAttribute("userid") != null) {
-                int userid = (Integer) session.getAttribute("userid");
-                firstname = (userdao.getUser((Integer) session.getAttribute("userid"))).getFirstname();
-        %>
-        <input type="hidden" id="userid" value="<%=userid%>">
-        <%
-            //if user had clicked login
-            if (session.getAttribute("returnMsg") != null) {
-        %>
-        <script>
-            alert("<%=session.getAttribute("returnMsg") + firstname%>");
-        </script>
-        <%
-                    session.removeAttribute("returnMsg");
-                }
-            }
-            //if user clicked logout
-            if (session.getAttribute("logoutMsg") != null) {
-        %>
-        <script>
-            alert("<%=session.getAttribute("logoutMsg")%>");
-        </script>
-        <%
-                session.removeAttribute("logoutMsg");
-            }
-            //if user had clicked forgot password
-            if (session.getAttribute("pwmsg") != null) {
-        %>
-        <script>
-            alert("<%=session.getAttribute("pwmsg")%>");
-        </script>
-        <%
-                session.removeAttribute("pwmsg");
-            }
-        %>
+        <%@include file="include/home-validation.jsp" %>
 
+        <!--Includes END-->
+
+        <%            
+            //userdao can be used here because it's declared in include/home-validation already
+            firstname = "Something";
+        %>
 
         <div class="container-fluid">
             <div class="row">

@@ -10,6 +10,7 @@ import connection.EmailConfiguration;
 import dao.UserDAO;
 import java.io.IOException;
 import static java.lang.System.out;
+import java.util.ArrayList;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -28,35 +29,45 @@ import javax.servlet.http.HttpSession;
  * @author Toshiba PC
  */
 @WebServlet("/sign-up")
-public class UserSignUpController extends HttpServlet{
-    
-     protected void doPost(HttpServletRequest request,
+public class UserSignUpController extends HttpServlet {
+
+    protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-         
-         String replyMessage = "Woops something went wrong!"; 
-         HttpSession session = request.getSession();
-         
-         UserDAO dao = new UserDAO();
-         int row = dao.addNewUser((String)request.getParameter("firstname"), (String)request.getParameter("lastname"), 
-                 (String)request.getParameter("email"), (String)request.getParameter("password"), 
-                 Integer.parseInt((String)request.getParameter("postal")), "default.png");
-         
-         if (row > 0) {
-             try {
-                sendEmail((String)request.getParameter("email"), (String)request.getParameter("firstname"), (String)request.getParameter("password"));
-            } catch (Exception e) {
-                out.print("<script>alert('Fail to send email!');</script>");
+
+        String replyMessage = "Woops something went wrong!";
+        HttpSession session = request.getSession();
+
+        UserDAO dao = new UserDAO();
+        ArrayList<String> existing = dao.getEmailList();
+
+        //check if user exists first
+        boolean already = true;
+        for (String e : existing) {
+            if (e.equals((String) request.getParameter("email"))) {
+                replyMessage = "You've already registered. Please click on Forget Password if you can't remember.";
+                already = false;
             }
+        }
+
+        if (already == true) {
+            int row = dao.addNewUser((String) request.getParameter("firstname"), (String) request.getParameter("lastname"),
+                    (String) request.getParameter("email"), (String) request.getParameter("password"),
+                    Integer.parseInt((String) request.getParameter("postal")), "default.png");
+
+            if (row > 0) {
+                try {
+                    sendEmail((String) request.getParameter("email"), (String) request.getParameter("firstname"), (String) request.getParameter("password"));
+                } catch (Exception e) {
+                    out.print("<script>alert('Fail to send email!');</script>");
+                }
                 replyMessage = "Congratulations on Signing Up!";
             }
-         session.setAttribute("replyMessage", replyMessage); //because request will keep url as sign-up then cannot access other pages
-         RequestDispatcher rd = request.getRequestDispatcher("home.jsp");
-         rd.forward(request, response);
-         
-     }
-     
-     
-     public void sendEmail(String email, String name, String newpw) throws Exception {
+        }
+        session.setAttribute("signUpMessage", replyMessage); //because request will keep url as sign-up then cannot access other pages
+        response.sendRedirect("home.jsp");
+    }
+
+    public void sendEmail(String email, String name, String newpw) throws Exception {
         String mailF = "<table  style=\"background-color: #f2f2f2; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: none\" width=\"870\">\n"
                 + "    <tbody><tr>\n"
                 + "            <td  style=\"background-color: #f2f2f2;\">\n"
@@ -120,7 +131,7 @@ public class UserSignUpController extends HttpServlet{
                 + "                                                                                                    <div class=\"widget-span widget-type-email_body \" style=\"\" data-widget-type=\"email_body\">\n"
                 + "\n"
                 + "                                                                                                        <div id=\"hs_cos_wrapper_hs_email_body\" class=\"hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_rich_text\" style=\"color: inherit; font-size: inherit; line-height: inherit; margin: inherit; padding: inherit\" data-hs-cos-general-type=\"widget\" data-hs-cos-type=\"rich_text\"><p style=\"margin-bottom: 1em; \">Hi, NAMENAMENAME</p>\n"
-                + "                                                                                                            <p style=\"margin-bottom: 1em; text-align: left;\">Welcome onboard Echo!<br>Thank you for signing up with us!<br>You may now sign in <a href=\"http://testdeploy-teamechofyp.rhcloud.com\">HERE</a> to experience ECHO<br></p>\n"                                                                                                           
+                + "                                                                                                            <p style=\"margin-bottom: 1em; text-align: left;\">Welcome onboard Echo!<br>Thank you for signing up with us!<br>You may now sign in <a href=\"http://testdeploy-teamechofyp.rhcloud.com\">HERE</a> to experience ECHO<br></p>\n"
                 + "                                                                                                            </p>\n"
                 + "                                                                                                            <p style=\"margin-bottom: 1em; \">&nbsp;</p>\n"
                 + "                                                                                                            <p style=\"margin-bottom: 1em; \">Sincerely,</p>\n"
@@ -135,7 +146,7 @@ public class UserSignUpController extends HttpServlet{
                 + "                                                                                                    <div class=\"widget-span widget-type-social_sharing \" style=\"\" data-widget-type=\"social_sharing\">\n"
                 + "                                                                                                        <div class=\"layout-widget-wrapper\">\n"
                 + "                                                                                                            <div id=\"hs_cos_wrapper_module_14321731711833436\" class=\"hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_social_sharing\" style=\"color: inherit; font-size: inherit; line-height: inherit; margin: inherit; padding: inherit\" data-hs-cos-general-type=\"widget\" data-hs-cos-type=\"social_sharing\">\n"
-                + "                                                                                                                <a href=\"http://facebook.com\" target=\"_blank\" style=\"width:24px;border-width:0px;border:0px;\"><img src=\"https://static.hubspot.com/final/img/common/icons/social/facebook-24x24.png?width=24\" class=\"hs-image-widget hs-image-social-sharing-24\" style=\"max-height:24px;max-width:24px;border-width:0px;border:0px;\" width=\"24\" hspace=\"0\" alt=\"Share on Facebook\" /></a>&nbsp;\n"                                                                                                               
+                + "                                                                                                                <a href=\"http://facebook.com\" target=\"_blank\" style=\"width:24px;border-width:0px;border:0px;\"><img src=\"https://static.hubspot.com/final/img/common/icons/social/facebook-24x24.png?width=24\" class=\"hs-image-widget hs-image-social-sharing-24\" style=\"max-height:24px;max-width:24px;border-width:0px;border:0px;\" width=\"24\" hspace=\"0\" alt=\"Share on Facebook\" /></a>&nbsp;\n"
                 + "                                                                                                        </div><!--end layout-widget-wrapper -->\n"
                 + "                                                                                                    </div><!--end widget-span -->\n"
                 + "                                                                                                </td>\n"
@@ -211,7 +222,7 @@ public class UserSignUpController extends HttpServlet{
         sendEmailViaGmail(email, mailF.replaceFirst("NAMENAMENAME", name));
 		//	return test;
 
-	   // this.mailSender.send(msg);
+        // this.mailSender.send(msg);
     }
 
     /**
@@ -237,8 +248,8 @@ public class UserSignUpController extends HttpServlet{
 
         // sends the e-mail
         Transport.send(msg);
-		  //      return "SUCCESS";
+        //      return "SUCCESS";
 
     }
-    
+
 }

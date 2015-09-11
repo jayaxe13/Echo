@@ -11,6 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import entity.User;
+import java.io.InputStream;
+import javax.servlet.http.Part;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 /**
  *
@@ -37,7 +40,7 @@ public class UserDAO {
 
             while (rs.next()) {
                 user_list.add(new User(rs.getInt("user_id"), rs.getString("firstname"), rs.getString("lastname"),
-                        rs.getString("email"), rs.getString("password"), rs.getInt("postal"), rs.getString("image"), 
+                        rs.getString("email"), rs.getString("password"), rs.getInt("postal"), rs.getBlob("image"),
                         rs.getBoolean("isAdmin")));
             }
         } catch (Exception e) {
@@ -46,7 +49,7 @@ public class UserDAO {
         }
         return user_list;
     }
-    
+
     public User getUser(int user_id) {
         try {
             conn = ConnectionManager.getConnection();
@@ -54,8 +57,8 @@ public class UserDAO {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                user = new User(rs.getInt("user_id"),rs.getString("firstname"), rs.getString("lastname"), rs.getString("email"), 
-                rs.getString("password"), rs.getInt("postal"), rs.getString("image"), rs.getBoolean("isAdmin"));
+                user = new User(rs.getInt("user_id"), rs.getString("firstname"), rs.getString("lastname"), rs.getString("email"),
+                        rs.getString("password"), rs.getInt("postal"), rs.getBlob("image"), rs.getBoolean("isAdmin"));
 
             }
         } catch (Exception e) {
@@ -64,7 +67,7 @@ public class UserDAO {
         }
         return user;
     }
-    
+
     public User getUser(String email) {
         try {
             conn = ConnectionManager.getConnection();
@@ -72,8 +75,8 @@ public class UserDAO {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                user = new User(rs.getInt("user_id"),rs.getString("firstname"), rs.getString("lastname"), rs.getString("email"), 
-                rs.getString("password"), rs.getInt("postal"), rs.getString("image"), rs.getBoolean("isAdmin"));
+                user = new User(rs.getInt("user_id"), rs.getString("firstname"), rs.getString("lastname"), rs.getString("email"),
+                        rs.getString("password"), rs.getInt("postal"), rs.getBlob("image"), rs.getBoolean("isAdmin"));
 
             }
         } catch (Exception e) {
@@ -82,8 +85,8 @@ public class UserDAO {
         }
         return user;
     }
-    
-    public int addNewUser(String firstname, String lastname, String email, String password, int postal, String image){
+
+    public int addNewUser(String firstname, String lastname, String email, String password, int postal, String image) {
         try {
             conn = ConnectionManager.getConnection();
             ps = conn.prepareStatement("INSERT INTO user (firstname, lastname, email, password, postal, image, isAdmin) values (?, ?, ?, ?, ?, ?, ?);");
@@ -95,18 +98,18 @@ public class UserDAO {
             ps.setInt(5, postal);
             ps.setString(6, image);
             ps.setInt(7, 0);
-            
+
             row = ps.executeUpdate(); //sends statement to the database server
-            
+
         } catch (Exception e) {
         } finally {
             ConnectionManager.close(conn, ps, rs);
         }
-        
+
         return row;
     }
-    
-    public ArrayList<String> getEmailList(){
+
+    public ArrayList<String> getEmailList() {
         try {
             conn = ConnectionManager.getConnection();
             ps = conn.prepareStatement("select email from user");
@@ -121,8 +124,8 @@ public class UserDAO {
         }
         return namelist;
     }
-    
-    public int getIdFromEmail(String email){
+
+    public int getIdFromEmail(String email) {
         try {
             conn = ConnectionManager.getConnection();
             ps = conn.prepareStatement("SELECT user_id FROM user WHERE email='" + email + "'");
@@ -137,8 +140,8 @@ public class UserDAO {
         }
         return userid;
     }
-    
-    public void setNewPassword(String pw, int userid){
+
+    public void setNewPassword(String pw, int userid) {
         try {
             conn = ConnectionManager.getConnection();
             String sql2 = "UPDATE `user` SET `password` ='" + pw + "' where `user_id` ='" + userid + "';";
@@ -150,15 +153,39 @@ public class UserDAO {
             ConnectionManager.close(conn, ps, rs);
         }
     }
-    
-    public void editUser(int Id, String firstName, String lastName, String email, String password, int Postal){
+
+    public void editUser(int Id, String firstName, String lastName, String email, String password, int Postal) {
         try {
             conn = ConnectionManager.getConnection();
-            String sql2 = "UPDATE `user` SET `firstname` ='" + firstName + "',`lastname` ='" + lastName + "', `email` ='" + email + "',`password` ='" + password+ "',`postal` = '" + Postal + "'  where `user_id` ='" + Id + "';";
+            String sql2 = "UPDATE `user` SET `firstname` ='" + firstName + "',`lastname` ='" + lastName + "', `email` ='" + email + "',`password` ='" + password + "',`postal` = '" + Postal + "'  where `user_id` ='" + Id + "';";
             ps = conn.prepareStatement(sql2);
             ps.execute();
 
         } catch (Exception e) {
+        } finally {
+            ConnectionManager.close(conn, ps, rs);
+        }
+    }
+
+    public void changeProfilePicure(Part image, int userid) {
+        try {
+            // connects to the database
+            conn = ConnectionManager.getConnection();
+
+            InputStream inputStream = image.getInputStream();
+            
+            // constructs SQL statement
+            String sql = "UPDATE `user` SET `image` ='" + image + "' where `user_id` ='" + userid + "';";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            
+            if (inputStream != null) {
+                // fetches input stream of the upload file for the blob column
+                statement.setBlob(1, inputStream);
+                statement.executeQuery();
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
         } finally {
             ConnectionManager.close(conn, ps, rs);
         }

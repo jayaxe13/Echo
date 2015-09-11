@@ -5,6 +5,7 @@
  */
 package entity;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 
 /**
@@ -19,11 +20,11 @@ public class User {
     private String email;
     private String password;
     private int postal;
-    private String image;
+    private Blob image;
     private boolean isAdmin;
     private ArrayList<User> user_list = new ArrayList<>();
 
-    public User(int user_id, String firstname, String lastname, String email, String password, int postal, String image, boolean isAdmin) {
+    public User(int user_id, String firstname, String lastname, String email, String password, int postal, Blob image, boolean isAdmin) {
         this.user_id = user_id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -52,7 +53,7 @@ public class User {
     public int getPostal(){
         return postal;
     }
-    public String getImage(){
+    public Blob getImage(){
         return image;
     }
     public boolean isAdmin() {
