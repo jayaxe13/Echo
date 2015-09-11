@@ -47,15 +47,12 @@ public class UserVerificationController extends HttpServlet {
                     returnMsg = "Welcome, ";
                     session.setAttribute("userid", userid); //sets session to follow login user, whether he's an admin or not
                 } else {
-                    returnMsg = "Invalid email/password";
+                    returnMsg = "Invalid password";
                 }
             } else {
-                returnMsg = "Invalid email/password";
+                returnMsg = "Invalid email";
             }
-        } else {
-            returnMsg = "Please fill in all fields";
-        }
-        
+        }         
         session.setAttribute("returnMsg", returnMsg);
         response.sendRedirect("home.jsp");
         

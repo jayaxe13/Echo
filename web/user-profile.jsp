@@ -4,6 +4,10 @@
     Author     : Qianpin
 --%>
 
+<%@page import="javax.imageio.ImageIO"%>
+<%@page import="java.io.ByteArrayInputStream"%>
+<%@page import="java.awt.image.BufferedImage"%>
+<%@page import="java.sql.Blob"%>
 <%@page import="entity.Childcare"%>
 <%@page import="dao.ChildcareDAO"%>
 <%@page import="entity.Review"%>
@@ -18,6 +22,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="icon" href="images/icon/echo.ico" type="image/x-icon">
 
+
+        <title>Echo</title>
+
         <script type="text/javascript">
 
         </script>
@@ -26,6 +33,7 @@
         <!--Standard Includes-->
         <%@include file="include/header-nav.jsp" %>
         <%@include file="include/bootstrap.jsp" %>
+        <%@include file="include/validation.jsp" %>
 
 
         <%            //instatiates user info
@@ -33,7 +41,10 @@
             String u_fullname = "";
             String email = "";
             int postal = 0;
-            String image = "";
+            Blob imageBlob = null;
+            byte[] imageByte = null;
+            String image_string = "";
+
             ArrayList<Review> reviewsbyu = null;
 
             int userid = (Integer) session.getAttribute("userid");
@@ -56,7 +67,7 @@
                 u_fullname = u.getFirstname() + " " + u.getLastname();
                 email = u.getEmail();
                 postal = u.getPostal();
-                image = u.getImage();
+                imageBlob = u.getImage();
 
                 reviewsbyu = userreviewdao.getReviews(Integer.parseInt(request.getParameter("frienduserid")));
             } else {
@@ -66,14 +77,19 @@
                 u_fullname = u.getFirstname() + " " + u.getLastname();
                 email = u.getEmail();
                 postal = u.getPostal();
-                image = u.getImage();
+                imageBlob = u.getImage();
+                if (imageBlob != null) {
+                    imageByte = imageBlob.getBytes(1, (int) imageBlob.length());
+                    image_string = javax.xml.bind.DatatypeConverter.printBase64Binary(imageByte);
+                }
+                
 
                 reviewsbyu = userreviewdao.getReviews(userid);
             }
 
         %>
 
-        <%            //if user had clicked login
+        <%            //if user had clicked edit profile
             if (session.getAttribute("editMsg") != null) {
         %>
         <script>
@@ -87,7 +103,19 @@
             <div class="row">
                 <div class="col-md-2 col-xs-4">
                     <!-- Sidebar -->
-                    <img src="images/user/<%=image%>" alt="profile picture" class="img-thumbnail">
+
+                    <!--If no profile picture was chosen-->
+                    <%
+                        if (imageBlob == null) {
+                    %>
+                    <img src="images/default.png" alt="profile picture" class="img-thumbnail">
+                    <%
+                    } else {
+                    %>
+                    <img src="data:image/jpg;base64, <%=image_string%>" alt="profile picture" class="img-thumbnail">      
+                    <%
+                        }
+                    %>
                 </div>
                 <div class="col-md-8 col-xs-8">
                     <!-- Main Body -->

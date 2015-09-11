@@ -4,8 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Toshiba%20PC/Documents/NetBeansProjects/Echo/web/user-profile.jsp</file>
-            <file>file:/C:/Users/Toshiba%20PC/Documents/NetBeansProjects/Echo/web/home.jsp</file>
-            <file>file:/C:/Users/Toshiba%20PC/Documents/NetBeansProjects/Echo/src/java/controller/UserVerificationController.java</file>
+            <file>file:/C:/Users/Toshiba%20PC/Documents/NetBeansProjects/Echo/web/c-review.jsp</file>
+            <file>file:/C:/Users/Toshiba%20PC/Documents/NetBeansProjects/Echo/src/java/dao/UserDAO.java</file>
+            <file>file:/C:/Users/Toshiba%20PC/Documents/NetBeansProjects/Echo/src/java/connection/connection.properties</file>
+            <file>file:/C:/Users/Toshiba%20PC/Documents/NetBeansProjects/Echo/web/c-individual.jsp</file>
+            <file>file:/C:/Users/Toshiba%20PC/Documents/NetBeansProjects/Echo/src/java/entity/User.java</file>
         </group>
     </open-files>
 </project-private>

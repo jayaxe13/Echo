@@ -63,7 +63,7 @@ public class UserEditController extends HttpServlet {
         dao.editUser(id, firstname, lastname, email, password, postal);
         
         
-        response.sendRedirect("user-profile.jsp");
+        response.sendRedirect("user-edit.jsp");
     }
 }
 
