@@ -122,4 +122,23 @@ public class ChildcareDAO {
         }
         return childcare_reviews;
     }
+    
+    public ArrayList<Childcare> search(String query){ 
+        ArrayList<Childcare> childcares = getChildcares();
+        ArrayList<Childcare> toReturn = new  ArrayList<Childcare>();
+        for(Childcare childcare : childcares){
+            if(childcare.getName().contains(query)){
+                toReturn.add(childcare);
+                continue;
+            }
+            
+            if(childcare.getAddress().contains(query)){
+                toReturn.add(childcare);
+                continue;
+            }
+            
+            
+        }
+        return toReturn;
+    }
 }
