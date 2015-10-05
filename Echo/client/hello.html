@@ -1,0 +1,18 @@
+<head>
+ <title>Childcares</title>
+</head>
+
+<body>
+ <ul>
+ {{#each childcares}}
+ {{> childcare}}
+ {{/each}}
+
+ </ul>
+</body>
+
+<template name="childcare">
+ <li>{{name}}
+ {{address}}
+ {{postalcode}} </li>
+</template>

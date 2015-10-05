@@ -1,0 +1,1 @@
+Childcare = new Meteor.Collection('childcare')
