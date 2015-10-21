@@ -1,0 +1,37 @@
+<head>
+  <title>Childcares</title>
+</head>
+
+<body>
+  <ul>
+      <table class="pure-table pure-table-bordered">
+          <thead>
+          <tr>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Postal Code</th>
+              <th>Ratings</th>
+          </tr>
+          </thead>
+
+          <tbody>
+      {{#each childcares}}
+          {{> childcare}}
+      {{/each}}
+          </tbody>
+
+      </table>
+  </ul>
+</body>
+
+<template name="childcare">
+
+            <tr>
+                <td>{{name}}</td>
+                <td>{{address}}</td>
+                <td>{{postalcode}}</td>
+                <td>{{ratings}}</td>
+            </tr>
+
+
+</template>
